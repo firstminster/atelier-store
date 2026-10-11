@@ -42,6 +42,7 @@ export default async function ProductPage({
   return (
     <>
       <SiteHeader />
+      {/* Product page for displaying individual product details */}
       <main>
         <div className="mx-auto max-w-page lg:grid lg:grid-cols-12">
           <div className="lg:col-span-7">
