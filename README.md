@@ -21,4 +21,4 @@ Next.js (App Router) + TypeScript + Tailwind CSS, with Better Auth, Drizzle ORM 
 
 ## Scripts
 
-`dev`, `build`, `start`, `lint`, `db:generate`, `db:migrate`, `db:push`, `db:studio`, `auth:generate`
+`dev`, `build`, `start`, `lint`, `db:generate`, `db:migrate`, `db:push`, `auth:generate`

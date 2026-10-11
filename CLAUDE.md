@@ -14,7 +14,7 @@ This project uses Next.js 16.4 with `cacheComponents` and `partialPrefetching` e
 - `npm run db:seed`: replace all categories and products with the sample catalogue in `src/db/seed.ts` (safe to re-run)
 - `npm run db:push`: sync the schema straight to the database (good for prototyping)
 - `npm run db:generate` then `npm run db:migrate`: create SQL migrations in `drizzle/` and apply them
-- `npm run db:studio`: Drizzle Studio
+- There is deliberately no `db:studio` script: drizzle-kit 0.31 Studio (and the 1.0 RC) accepts SQL from any browser origin with wildcard CORS and no auth token, so any website open while it runs can query the database. Don't add it back until upstream fixes this.
 
 There is no test framework set up yet.
 
