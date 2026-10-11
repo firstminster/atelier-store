@@ -1,26 +1,408 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Atelier design system
+ * ---------------------
+ * Gallery-white canvas, black ink, hairline rules, square corners.
+ * Photography carries the colour; the UI stays quiet.
+ */
+
+/* ---------------------------------------------------------------- Tokens */
+
+@theme {
+  /* Colour: near-monochrome. Accent colours are reserved for status only. */
+  --color-paper: #ffffff;
+  --color-ink: #111111;
+  --color-ink-soft: #3a3a3a;
+  --color-muted: #6f6f6f;
+  --color-subtle: #a3a3a3;
+  --color-surface: #f4f3f1; /* product image backdrop, form fields */
+  --color-surface-strong: #e9e7e3;
+  --color-line: #e3e2df; /* hairline dividers */
+  --color-line-strong: #111111; /* outlined controls */
+  --color-error: #a3241b;
+  --color-warning: #8a5300;
+  --color-success: #2f5d3a;
+
+  /* Type scale: small, restrained UI text; fluid editorial display sizes. */
+  --text-micro: 0.6875rem; /* 11px: labels, nav, buttons */
+  --text-micro--line-height: 1rem;
+  --text-caption: 0.75rem; /* 12px: meta, price notes */
+  --text-caption--line-height: 1.125rem;
+  --text-body: 0.875rem; /* 14px: default UI copy */
+  --text-body--line-height: 1.375rem;
+  --text-lead: 1rem; /* 16px: product descriptions, intros */
+  --text-lead--line-height: 1.625rem;
+  --text-title: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
+  --text-title--line-height: 1.2;
+  --text-heading: clamp(1.75rem, 1.35rem + 1.8vw, 3rem);
+  --text-heading--line-height: 1.1;
+  --text-display: clamp(2.5rem, 1.6rem + 4.5vw, 6rem);
+  --text-display--line-height: 1;
+
+  --tracking-label: 0.14em;
+  --tracking-display: -0.015em;
+
+  /* Spacing: Tailwind's 4px scale plus fluid layout rhythm. */
+  --spacing-gutter: clamp(1rem, 0.6rem + 2vw, 2.5rem);
+  --spacing-section: clamp(3rem, 2rem + 5vw, 7.5rem);
+  --spacing-header: 3.5rem;
+  /* Whole sticky masthead: 2rem announcement bar + header row. Use for
+     sticky offsets, scroll margins and viewport-height heroes. */
+  --spacing-masthead: calc(var(--spacing-header) + 2rem);
+  --spacing-control: 3rem; /* button / input height */
+
+  /* Containers (max-w-page, max-w-content, max-w-text) */
+  --container-page: 100rem; /* 1600px */
+  --container-content: 80rem; /* 1280px */
+  --container-text: 42rem; /* long-form copy, forms */
+
+  --ease-atelier: cubic-bezier(0.2, 0, 0, 1);
+  --default-transition-duration: 200ms;
+  --default-transition-timing-function: var(--ease-atelier);
+
+  --aspect-portrait: 3 / 4;
+  --aspect-editorial: 4 / 5;
+  --aspect-hero: 16 / 9;
 }
 
+/* Font variables come from next/font on <html>, so they must stay inline. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-display), ui-serif, Georgia, serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
+/* ------------------------------------------------------------------ Base */
+
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    color-scheme: light;
+  }
+
+  @media (min-width: 64rem) {
+    :root {
+      --spacing-header: 4.5rem;
+    }
+  }
+
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-line);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 400;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img,
+  video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  ::selection {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ------------------------------------------------------------ Typography */
+
+/* Uppercase, tracked micro text: nav, eyebrows, buttons, filters. */
+@utility text-label {
+  font-size: var(--text-micro);
+  line-height: var(--text-micro--line-height);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+@utility text-display {
+  font-family: var(--font-serif);
+  font-size: var(--text-display);
+  line-height: var(--text-display--line-height);
+  letter-spacing: var(--tracking-display);
+  font-weight: 400;
+}
+
+@utility text-heading {
+  font-family: var(--font-serif);
+  font-size: var(--text-heading);
+  line-height: var(--text-heading--line-height);
+  letter-spacing: var(--tracking-display);
+  font-weight: 400;
+}
+
+@utility text-title {
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  font-weight: 400;
+}
+
+/* --------------------------------------------------------------- Layout */
+
+/* Default page width: wide, with fluid side gutters. */
+@utility container-page {
+  width: 100%;
+  max-width: var(--container-page);
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+}
+
+@utility container-content {
+  width: 100%;
+  max-width: var(--container-content);
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+}
+
+@utility container-text {
+  width: 100%;
+  max-width: var(--container-text);
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+}
+
+/* Edge-to-edge media that ignores container gutters. */
+@utility full-bleed {
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+}
+
+@utility section {
+  padding-block: var(--spacing-section);
+}
+
+@utility stack {
+  display: flex;
+  flex-direction: column;
+}
+
+@utility cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Product listing: 2 → 3 → 4 columns, tight columns, airy rows. */
+@utility grid-products {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: --spacing(1);
+  row-gap: --spacing(10);
+
+  @media (width >= 48rem) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: --spacing(2);
+  }
+
+  @media (width >= 80rem) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    row-gap: --spacing(14);
+  }
+}
+
+/* 12-column editorial grid for campaign blocks and PDP layouts. */
+@utility grid-editorial {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-gutter);
+
+  @media (width >= 64rem) {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+}
+
+/* Media frames: fixed ratio, neutral backdrop while images load. */
+@utility media-frame {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-surface);
+
+  & > :is(img, video) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+/* --------------------------------------------------------------- Borders */
+
+@utility hairline {
+  border-width: 1px;
+  border-color: var(--color-line);
+}
+
+@utility divider {
+  height: 1px;
+  width: 100%;
+  border: 0;
+  background-color: var(--color-line);
+}
+
+/* --------------------------------------------------------------- Buttons */
+
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: --spacing(2);
+  min-height: var(--spacing-control);
+  padding-inline: --spacing(8);
+  border: 1px solid transparent;
+  border-radius: 0;
+  font-size: var(--text-micro);
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition-property: color, background-color, border-color;
+  transition-duration: var(--default-transition-duration);
+  transition-timing-function: var(--ease-atelier);
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+}
+
+/* Solid black: one primary action per view (add to bag, checkout). */
+@utility btn-primary {
+  background-color: var(--color-ink);
+  border-color: var(--color-ink);
+  color: var(--color-paper);
+
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: var(--color-ink-soft);
+    border-color: var(--color-ink-soft);
+  }
+}
+
+/* Outlined: secondary actions, editorial "discover" links over white. */
+@utility btn-secondary {
+  background-color: transparent;
+  border-color: var(--color-line-strong);
+  color: var(--color-ink);
+
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+}
+
+/* Inverse: for use on top of photography. */
+@utility btn-inverse {
+  background-color: var(--color-paper);
+  border-color: var(--color-paper);
+  color: var(--color-ink);
+
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: transparent;
+    color: var(--color-paper);
+  }
+}
+
+/* Square icon button for header actions (search, bag, account). */
+@utility btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: --spacing(10);
+  height: --spacing(10);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: opacity var(--default-transition-duration) var(--ease-atelier);
+
+  &:hover {
+    opacity: 0.6;
+  }
+}
+
+/* ----------------------------------------------------------------- Links */
+
+/* Underline that draws in on hover; for nav and inline text links. */
+@utility link {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0 1px;
+  padding-bottom: 1px;
+  transition: background-size 300ms var(--ease-atelier);
+
+  &:hover,
+  &:focus-visible,
+  &[aria-current="page"] {
+    background-size: 100% 1px;
+  }
+}
+
+/* Always-underlined link for calls to action inside copy. */
+@utility link-underline {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color var(--default-transition-duration);
+
+  &:hover {
+    text-decoration-color: var(--color-subtle);
+  }
+}
+
+@utility link-muted {
+  color: var(--color-muted);
+  transition: color var(--default-transition-duration) var(--ease-atelier);
+
+  &:hover {
+    color: var(--color-ink);
+  }
 }
